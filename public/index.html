@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mitra | Premium Chat Interface</title>
+    <meta name="description" content="A state-of-the-art AI chat interface with a premium dark mode design.">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="apple-touch-icon" href="/logo.png">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link id="hljsTheme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="css/modals.css">
+</head>
+<body class="is-logged-out">
+    <!-- Floating Menu Toggle -->
+    <button class="global-menu-toggle" id="globalSidebarToggle" title="Collapse menu">
+        <i data-lucide="menu"></i>
+    </button>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- Spacing for fixed menu button -->
+                <div style="height: 40px;"></div>
+                <button class="new-chat-btn" id="newChatBtn">
+                    <i data-lucide="plus"></i>
+                    <span>New Chat</span>
+                </button>
+            </div>
+
+            <div class="sidebar-content">
+                <!-- Logged In History -->
+                <div class="history-section logged-in-only">
+                    <div class="section-label">Recent Chats</div>
+                    <ul class="chat-history" id="chatHistory">
+                    </ul>
+                </div>
+
+                <!-- Logged Out Promo -->
+                <div class="login-promo-card logged-out-only">
+                    <h3>Log in to start saving your chats</h3>
+                    <p>Once you're signed in, you can access your recent chats here.</p>
+                    <button class="promo-signin-link" onclick="openAuthModal(false)">Log in / Sign up</button>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <button class="settings-gear-btn" id="settingsMenuBtn" title="Settings">
+                    <i data-lucide="settings"></i>
+                    <span class="settings-text">Settings</span>
+                </button>
+                
+                <div class="user-profile-info logged-in-only" id="sidebarUserProfile">
+                    <div class="user-avatar" id="userAvatarLetter" style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-gradient, #3b82f6); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; cursor: default; flex-shrink: 0;" title="User Profile"></div>
+                    <span class="sidebar-user-name" id="sidebarUserNameSpan"></span>
+                </div>
+                
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <div class="dropdown-item" id="profileDropdownItem">
+                        <i data-lucide="user"></i>
+                        <span>Profile</span>
+                    </div>
+                    <div class="dropdown-item logged-in-only" onclick="simulateLogout()" id="logoutDropdownItem">
+                        <i data-lucide="log-out" id="logoutIcon"></i>
+                        <span id="logoutText">Sign out</span>
+                    </div>
+                    <div class="dropdown-divider logged-in-only"></div>
+                    <div class="dropdown-item" id="feedbackDropdownItem">
+                        <i data-lucide="message-square"></i>
+                        <span>Feedback</span>
+                    </div>
+                    <div class="dropdown-item" id="helpDropdownItem">
+                        <i data-lucide="help-circle"></i>
+                        <span>Help</span>
+                    </div>
+                    <div class="dropdown-item" id="aboutDropdownItem">
+                        <i data-lucide="info"></i>
+                        <span>About</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Chat Area -->
+        <main class="chat-container landing-mode">
+            <header class="chat-header">
+                <div class="header-left">
+                    <div class="logo-icon" style="width: 24px; height: 24px; border-radius: 6px;"></div>
+                    <span class="app-name">AI Mitra</span>
+                </div>
+                <div class="header-actions">
+                    <button class="action-btn theme-toggle" id="themeToggle" title="Toggle Theme">
+                        <i data-lucide="moon"></i>
+                    </button>
+                    <button class="primary-signin-btn logged-out-only" onclick="openAuthModal(false)">Log in</button>
+                    <button class="primary-signin-btn logged-out-only" onclick="openAuthModal(true)" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-main);">Sign up</button>
+                </div>
+            </header>
+
+            <div class="vertical-spacer top-spacer"></div>
+
+            <div class="messages-area" id="messagesArea">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-logo">
+                        <div class="logo-icon large"></div>
+                    </div>
+                    <div class="welcome-text-wrapper logged-in-only">
+                        <h2 class="greeting-user" id="welcomeGreeting">Hi <span id="welcomeUserName" class="name-gradient">User</span>,</h2>
+                        <h1 id="welcomeSubtext">How can I help you today?</h1>
+                    </div>
+                    
+                    <!-- Landing Page Heading -->
+                    <div class="landing-heading logged-out-only">
+                        <h1 id="landingDynamicHeading">Meet AI Mitra, your personal AI assistant</h1>
+                    </div>
+
+                    <div class="suggestion-chips">
+                        <button class="suggestion-chip">Write a blog post about AI</button>
+                        <button class="suggestion-chip">Explain quantum computing</button>
+                        <button class="suggestion-chip">Help me debug some code</button>
+                        <button class="suggestion-chip">Plan a trip to Tokyo</button>
+                    </div>
+                </div>
+                <!-- Messages will be injected here -->
+            </div>
+
+            <footer class="input-area">
+                <div class="input-wrapper">
+                    <!-- Premium Inline Left Model Selector -->
+                    <div class="custom-model-selector" id="modelSelectorContainer" title="Select AI Model">
+                        <div class="model-selector-trigger" id="modelSelectorTrigger">
+                            <span id="selectedModelIconContainer" style="display:flex; align-items:center;"><i data-lucide="zap"></i></span>
+                            <span id="selectedModelText">Gemini</span>
+                            <i data-lucide="chevron-down" class="dropdown-icon"></i>
+                        </div>
+                        <div class="model-selector-dropdown" id="modelSelectorDropdown">
+                            <div class="dropdown-category">Gemini (Google)</div>
+                            <div class="model-option active" data-value="gemini-2.5-flash" data-icon="zap">
+                                <i data-lucide="zap"></i>
+                                <span>Gemini 2.5 Flash</span>
+                            </div>
+                            <div class="model-option" data-value="gemini-2.0-flash" data-icon="zap">
+                                <i data-lucide="zap"></i>
+                                <span>Gemini 2.0 Flash</span>
+                            </div>
+                            <div class="model-option" data-value="gemini-2.5-pro" data-icon="sparkles">
+                                <i data-lucide="sparkles"></i>
+                                <span>Gemini 2.5 Pro</span>
+                            </div>
+                            
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-category">Cohere</div>
+                            <div class="model-option" data-value="command-r" data-icon="cpu">
+                                <i data-lucide="cpu"></i>
+                                <span>Command R</span>
+                            </div>
+                            <div class="model-option" data-value="command-r-plus" data-icon="cpu">
+                                <i data-lucide="cpu"></i>
+                                <span>Command R+</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="chatModelSelect" value="gemini-2.5-flash">
+                    </div>
+
+                    <!-- Voice Waves Container -->
+                    <div class="voice-waves-container" id="voiceWaves">
+                        <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
+                        <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
+                        <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
+                        <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
+                    </div>
+                    <textarea id="chatInput" placeholder="Message AI Mitra..." rows="1"></textarea>
+                    <div class="input-actions-right">
+                        <button class="input-btn mic-btn" title="Voice Input">
+                            <i data-lucide="mic"></i>
+                        </button>
+                        <button class="send-btn" id="sendBtn" disabled>
+                            <i data-lucide="arrow-up"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <p class="disclaimer" id="chatDisclaimer" style="display: none;">AI Mitra can make mistakes. Check important info.</p>
+            </footer>
+
+            <div class="vertical-spacer bottom-spacer"></div>
+        </main>
+    </div>
+    <!-- Profile Edit Modal -->
+    <div class="modal-overlay" id="profileModalOverlay">
+        <div class="profile-modal">
+            <div class="modal-header">
+                <h2>Edit profile</h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-avatar-wrapper" style="margin-bottom: 12px;">
+                    <div class="modal-avatar" id="modalAvatarLetter">U</div>
+                </div>
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <span id="profileEmailDisplay" style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500;"></span>
+                </div>
+                
+                <div class="input-group">
+                    <label for="displayNameInput">Display name</label>
+                    <input type="text" id="displayNameInput" placeholder="Enter display name">
+                </div>
+                
+                <div class="input-group">
+                    <label for="usernameInput">Username</label>
+                    <input type="text" id="usernameInput" placeholder="Enter username">
+                </div>
+
+                <div style="text-align: right; margin-top: 8px; margin-bottom: 20px;">
+                    <a href="/reset-password.html" id="updatePasswordLink" style="color: var(--accent-primary); font-size: 0.85rem; text-decoration: none; font-weight: 500; transition: opacity 0.2s;">Update password</a>
+                </div>
+                
+                <p class="modal-disclaimer">Your profile helps people recognize you. Your name and username are also used in the AI Mitra app.</p>
+            </div>
+            <div class="modal-footer" style="justify-content: space-between; display: flex; width: 100%;">
+                <button class="modal-btn secondary" id="deleteAccountBtn" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); font-weight: 600;">Delete Account</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="modal-btn secondary" id="cancelProfileBtn">Cancel</button>
+                    <button class="modal-btn primary" id="saveProfileBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="modal-overlay" id="logoutModalOverlay">
+        <div class="profile-modal logout-modal" style="max-width: 380px;">
+            <div class="modal-header">
+                <h2>Sign out</h2>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 10px 0 40px; line-height: 1.5;">
+                <p style="color: var(--text-main); font-size: 1rem;">Are you sure you want to sign out of AI Mitra?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" id="cancelLogoutBtn">Cancel</button>
+                <button class="modal-btn primary" id="confirmLogoutBtn" style="background: #ef4444; color: white;">Sign out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal-overlay" id="deleteAccountModalOverlay">
+        <div class="profile-modal" style="max-width: 440px; text-align: center; padding: 40px 30px; margin: 0 auto;">
+            <div class="modal-icon-container" style="background: #fee2e2; color: #ef4444; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                <i data-lucide="heart-off" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h2 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 12px; font-weight: 700;">We're sad to see you go...</h2>
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 32px;">
+                Are you sure you want to delete your account? All your chats, custom settings, and memories with AI Mitra will be gone forever. We've loved being part of your journey.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="modal-btn secondary" id="cancelDeleteBtn" style="width: 100%; padding: 14px; font-weight: 600;">Actually, I'll stay</button>
+                <button class="modal-btn" id="confirmDeleteBtn" style="width: 100%; padding: 14px; background: transparent; color: #ef4444; border: 1px solid #fee2e2; font-weight: 600; cursor: pointer; border-radius: 12px; transition: all 0.2s;">Yes, delete my account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal (Sign in / Sign up) -->
+    <div class="modal-overlay" id="authModalOverlay">
+        <div class="profile-modal auth-modal" style="max-width: 400px; padding: 40px 32px; position: relative;">
+            <button class="close-modal-btn" id="closeAuthModalBtn" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 4px;">
+                <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+            </button>
+
+            <div class="modal-header" style="justify-content: center; margin-bottom: 32px;">
+                <div class="logo" style="justify-content: center;">
+                    <div class="logo-icon"></div>
+                    <span style="font-size: 1.5rem; color: var(--text-main); font-weight: 700;">AI Mitra</span>
+                </div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="auth-tabs" id="authTabsHeader" style="display: flex; gap: 8px; margin-bottom: 24px; background: var(--surface-hover); padding: 4px; border-radius: 12px;">
+                    <button class="auth-tab active" id="tabLogin" style="flex: 1; padding: 10px; border: none; background: var(--chat-bg); color: var(--text-main); border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s;">Log in</button>
+                    <button class="auth-tab" id="tabSignup" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-muted); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Sign up</button>
+                </div>
+
+                <!-- Method Selection -->
+                <div id="authMethodSelection" style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px;">
+                    <!-- Real Google Sign-In Button -->
+                    <div id="googleSignInButton" style="width: 100%; display: flex; justify-content: center;"></div>
+                    
+                    <div style="display: flex; align-items: center; gap: 12px; margin: 12px 0;">
+                        <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+                        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">or</span>
+                        <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+                    </div>
+
+                    <button class="social-auth-btn aimitra-btn" onclick="showAuthForm()">
+                        <div class="mini-logo-icon"></div>
+                        <span id="continueEmailText">Continue with AI Mitra</span>
+                    </button>
+                </div>
+                
+                <!-- Actual Form Fields -->
+                <div id="authFormContainer" style="display: none; margin-top: 16px;">
+                    <button class="back-to-auth-methods" onclick="backToAuthMethods()" style="background: transparent; border: none; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.9rem; margin-bottom: 20px; font-weight: 500;">
+                        <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                        Back
+                    </button>
+
+                    <div class="input-group" id="nameInputContainer" style="padding: 12px 14px; display: none;">
+                        <label for="authNameInput">Full Name</label>
+                        <input type="text" id="authNameInput" placeholder="John Doe">
+                        <span class="error-msg" id="nameError" style="color: #ef4444; font-size: 0.75rem; margin-top: 6px; display: none; font-weight: 500;"></span>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 16px; padding: 12px 14px;">
+                        <label for="authEmailInput">Email address</label>
+                        <input type="email" id="authEmailInput" placeholder="john@example.com">
+                        <span class="error-msg" id="emailError" style="color: #ef4444; font-size: 0.75rem; margin-top: 6px; display: none; font-weight: 500;"></span>
+                    </div>
+                    
+                    <div class="input-group" style="margin-top: 16px; padding: 12px 14px;">
+                        <label for="authPasswordInput">Password</label>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="authPasswordInput" placeholder="••••••••" style="flex: 1; padding-right: 60px;">
+                            <button type="button" class="toggle-password-btn" data-target="authPasswordInput" style="position: absolute; right: 12px; background: transparent; border: none; color: var(--accent-primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 4px;">Show</button>
+                        </div>
+                        <span class="error-msg" id="passwordError" style="color: #ef4444; font-size: 0.75rem; margin-top: 6px; display: none; font-weight: 500;"></span>
+                    </div>
+
+                    <div class="input-group" id="confirmPasswordContainer" style="margin-top: 16px; padding: 12px 14px; display: none;">
+                        <label for="authConfirmPasswordInput">Confirm Password</label>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="authConfirmPasswordInput" placeholder="••••••••" style="flex: 1; padding-right: 60px;">
+                            <button type="button" class="toggle-password-btn" data-target="authConfirmPasswordInput" style="position: absolute; right: 12px; background: transparent; border: none; color: var(--accent-primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 4px;">Show</button>
+                        </div>
+                        <span class="error-msg" id="confirmPasswordError" style="color: #ef4444; font-size: 0.75rem; margin-top: 6px; display: none; font-weight: 500;"></span>
+                    </div>
+
+                    <div class="input-group" id="otpInputContainer" style="margin-top: 16px; padding: 12px 14px; display: none;">
+                        <label for="authOtpInput">Verification Code (sent to email)</label>
+                        <input type="text" id="authOtpInput" placeholder="123456" maxlength="6">
+                        <span class="error-msg" id="otpError" style="color: #ef4444; font-size: 0.75rem; margin-top: 6px; display: none; font-weight: 500;"></span>
+                    </div>
+
+                    <div id="forgotPasswordContainer" style="text-align: right; margin-top: 12px; display: none; padding: 0 14px;">
+                        <a href="#" id="forgotPasswordLink" style="color: var(--accent-primary); font-size: 0.85rem; text-decoration: none; font-weight: 500; transition: opacity 0.2s;">Forgot password?</a>
+                    </div>
+                    
+                    <button class="modal-btn primary" id="sendOtpBtn" style="width: 100%; margin-top: 24px; padding: 14px; font-size: 1rem; border-radius: 12px; font-weight: 600; display: none;">Send Verification Code</button>
+                    <button class="modal-btn primary" id="authSubmitBtn" style="width: 100%; margin-top: 24px; padding: 14px; font-size: 1rem; border-radius: 12px; font-weight: 600;">Log in</button>
+                </div>
+                
+                <p style="text-align: center; margin-top: 24px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                    By continuing, you agree to AI Mitra's <a href="#" style="color: var(--accent-primary); text-decoration: none;">Terms of Service</a> and <a href="#" style="color: var(--accent-primary); text-decoration: none;">Privacy Policy</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info/Prompt Modal -->
+    <div class="modal-overlay" id="infoModalOverlay">
+        <div class="profile-modal logout-modal" style="max-width: 400px; padding: 32px;">
+            <div class="modal-header" style="justify-content: center; margin-bottom: 24px;">
+                <div class="logo">
+                    <div class="logo-icon"></div>
+                </div>
+            </div>
+            <div class="modal-body" style="text-align: center; margin-bottom: 32px;">
+                <p id="infoModalMessage" style="color: var(--text-main); font-size: 1.1rem; font-weight: 500; line-height: 1.6;"></p>
+            </div>
+            <div class="modal-footer" style="flex-direction: column; gap: 12px;">
+                <button class="modal-btn primary" id="infoModalActionBtn" style="width: 100%; padding: 14px; font-weight: 600;">Sign up / Log in</button>
+                <button class="modal-btn secondary" id="closeInfoModalBtn" style="width: 100%; border: none; background: transparent;">Maybe later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal-overlay" id="feedbackModalOverlay">
+        <div class="profile-modal feedback-modal">
+            <div class="modal-header">
+                <h2>Send feedback</h2>
+                <button class="close-modal-btn" id="closeFeedbackModalBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <!-- Default Feedback Form -->
+            <div id="feedbackFormContent">
+                <div class="modal-body">
+                    <p class="modal-subtitle">How would you rate your experience with AI Mitra?</p>
+                    
+                    <div class="star-rating-container" id="starRatingContainer">
+                        <button class="star-btn" data-rating="1" title="Poor"><i data-lucide="star"></i></button>
+                        <button class="star-btn" data-rating="2" title="Fair"><i data-lucide="star"></i></button>
+                        <button class="star-btn" data-rating="3" title="Good"><i data-lucide="star"></i></button>
+                        <button class="star-btn" data-rating="4" title="Excellent"><i data-lucide="star"></i></button>
+                        <button class="star-btn" data-rating="5" title="Amazing"><i data-lucide="star"></i></button>
+                    </div>
+
+                    <div class="input-group feedback-input-group">
+                        <label for="feedbackTextarea">Describe your feedback (required)</label>
+                        <textarea id="feedbackTextarea" placeholder="Tell us what you liked or how we can improve..."></textarea>
+                    </div>
+                    <p class="modal-disclaimer muted-small">Your feedback helps us make AI Mitra better for everyone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn feedback-send-btn" id="feedbackSendBtn" disabled style="width: 100%;">Submit Feedback</button>
+                </div>
+            </div>
+
+            <!-- Success State (Hidden by default) -->
+            <div id="feedbackSuccessContent" style="display: none;">
+                <div class="modal-body success-body">
+                    <div class="success-icon-wrapper">
+                        <i data-lucide="heart" class="success-heart"></i>
+                    </div>
+                    <h3 id="feedbackSuccessTitle">Thank you!</h3>
+                    <p id="feedbackSuccessMessage">We appreciate your feedback.</p>
+                    <button class="modal-btn primary" id="feedbackDoneBtn" style="width: 100%; margin-top: 24px;">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteConfirmModalOverlay">
+        <div class="profile-modal auth-modal" style="text-align: center; max-width: 380px; padding: 24px;">
+            <div class="modal-header" style="justify-content: center; margin-bottom: 8px; border:none; padding-bottom: 0;">
+                <h2 style="color: #ef4444; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i data-lucide="triangle-alert"></i>
+                    Delete Chat
+                </h2>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; line-height: 1.5;">Are you sure you want to permanently delete this conversation? This action cannot be undone.</p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button class="modal-btn secondary" id="cancelDeleteChatBtn" style="flex: 1;">Cancel</button>
+                <button class="modal-btn primary" id="confirmDeleteChatBtn" style="flex: 1; background: #dc2626; border-color: #dc2626; color: white;">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Chat Modal -->
+    <div class="modal-overlay" id="renameChatModalOverlay">
+        <div class="profile-modal auth-modal" style="text-align: center; max-width: 380px; padding: 24px;">
+            <div class="modal-header" style="justify-content: center; margin-bottom: 16px; border:none; padding-bottom: 0;">
+                <h2 style="color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i data-lucide="edit-2"></i>
+                    Rename Chat
+                </h2>
+            </div>
+            <div class="input-group" style="margin-bottom: 24px; text-align: left;">
+                <label for="renameChatInput">Chat Name</label>
+                <input type="text" id="renameChatInput" placeholder="Enter new chat name">
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button class="modal-btn secondary" id="cancelRenameChatBtn" style="flex: 1;">Cancel</button>
+                <button class="modal-btn primary" id="confirmRenameChatBtn" style="flex: 1;">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

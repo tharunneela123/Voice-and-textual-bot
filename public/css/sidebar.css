@@ -1,0 +1,422 @@
+/* Sidebar Styling */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    height: 100vh;
+    transition: width var(--transition-speed) ease, transform var(--transition-speed) ease;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+.sidebar-header {
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+
+.new-chat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-main);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.new-chat-btn:hover {
+    background: var(--surface-hover);
+    border-color: var(--text-muted);
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 16px;
+}
+
+.section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.chat-history {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    cursor: default;
+}
+
+.history-item-content {
+    cursor: default;
+}
+
+
+
+.history-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.history-item:hover .history-item-actions {
+    opacity: 1;
+}
+
+.action-chat-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.action-chat-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+}
+
+.action-chat-btn.delete-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.action-chat-btn i {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.history-item:hover, .history-item.active {
+    background: var(--surface-hover);
+    color: var(--text-main);
+}
+
+.history-item i {
+    width: 16px;
+    height: 16px;
+}
+
+/* Login Promo Card */
+.login-promo-card {
+    background: #e9eef6;
+    border-radius: 20px;
+    padding: 24px;
+    margin-top: 10px;
+    color: #1e1e1e;
+}
+
+[data-theme="dark"] .login-promo-card {
+    background: #1e1f20;
+    color: #e3e3e3;
+    border: 1px solid var(--border-color);
+}
+
+.login-promo-card h3 {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+}
+
+.login-promo-card p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    color: var(--text-muted);
+}
+
+.promo-signin-link {
+    background: var(--accent-gradient);
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.promo-signin-link:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+.sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+    position: relative;
+}
+
+.settings-gear-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05); /* Neat BG for settings */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+.settings-text {
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.user-profile-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    width: 100%;
+    margin-top: 4px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.user-profile-info:hover {
+    background: var(--surface-hover);
+}
+
+.sidebar-user-name {
+    padding: 8px 12px;
+    background: rgba(99, 102, 241, 0.1); /* Neat BG for profile name only */
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+
+.user-profile-info:hover .sidebar-user-name {
+    background: rgba(99, 102, 241, 0.2);
+}
+
+.settings-gear-btn:hover {
+    background: var(--surface-hover);
+    color: var(--text-main);
+}
+
+.settings-gear-btn i {
+    width: 20px;
+    height: 20px;
+}
+
+.settings-dropdown {
+    position: absolute;
+    bottom: calc(100% + 5px); 
+    left: 16px;
+    width: 260px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: var(--shadow-main);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 1000;
+    transform-origin: bottom left;
+}
+
+.settings-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: var(--text-main);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: var(--surface-hover);
+    transform: translateX(4px);
+}
+
+.dropdown-item i {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover i {
+    color: var(--accent-primary);
+    transform: scale(1.1);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 6px 4px;
+}
+
+/* Collapsed Sidebar Logic */
+@media (min-width: 769px) {
+    .sidebar.collapsed {
+        width: 68px;
+        transform: none; 
+        overflow: visible;
+    }
+
+    .sidebar.collapsed .sidebar-header,
+    .sidebar.collapsed .sidebar-footer {
+        padding-left: 14px;
+        padding-right: 14px;
+        align-items: center;
+    }
+
+    .sidebar.collapsed span,
+    .sidebar.collapsed .user-info,
+    .sidebar.collapsed .section-label,
+    .sidebar.collapsed .settings-text,
+    .sidebar.collapsed .sidebar-user-name,
+    .sidebar.collapsed .user-profile-info span {
+        display: none !important;
+    }
+
+    .sidebar.collapsed .user-profile-info {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .sidebar.collapsed .settings-dropdown span {
+        display: block !important;
+    }
+
+    .sidebar.collapsed .new-chat-btn,
+    .sidebar.collapsed .settings-gear-btn {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        justify-content: center;
+        background: transparent;
+        border-color: transparent;
+    }
+
+    .sidebar.collapsed .chat-history {
+        align-items: center;
+    }
+
+    .sidebar.collapsed .history-item {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .sidebar.collapsed .sidebar-content {
+        display: none !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        width: 280px;
+    }
+
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 999; /* Just below sidebar (1000) but above content */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .sidebar.active + .sidebar-overlay {
+        opacity: 1;
+        visibility: visible;
+    }
+}

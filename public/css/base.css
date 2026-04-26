@@ -1,0 +1,191 @@
+:root {
+    /* Color Palette (Solarized Dark - DEFAULT) */
+    --bg-dark: #001e26;
+    --sidebar-bg: #002b36;
+    --chat-bg: #073642;
+    --accent-primary: #268bd2;
+    --accent-secondary: #2aa198;
+    --accent-gradient: linear-gradient(135deg, #268bd2 0%, #2aa198 100%);
+    --text-main: #93a1a1;
+    --text-muted: #586e75;
+    --border-color: rgba(147, 161, 161, 0.15);
+    --bubble-user: #002b36;
+    --bubble-bot: transparent;
+    --surface-hover: rgba(147, 161, 161, 0.07);
+    --code-bg: #002b36;
+    
+    /* Effects */
+    --glass-bg: rgba(0, 43, 54, 0.7);
+    --glass-blur: blur(12px);
+    --shadow-main: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    
+    /* Layout */
+    --sidebar-width: 280px;
+    --header-height: 56px;
+    --transition-speed: 0.3s;
+}
+
+[data-theme="dark"] {
+    --bg-dark: #0a0a0c;
+    --sidebar-bg: #111114;
+    --chat-bg: #0d0d0f;
+    --accent-primary: #6366f1;
+    --accent-secondary: #a855f7;
+    --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --bubble-user: #2d2d33;
+    --bubble-bot: transparent;
+    --surface-hover: rgba(255, 255, 255, 0.05);
+    --code-bg: #1e1e2e;
+    --glass-bg: rgba(17, 17, 20, 0.7);
+}
+
+
+[data-theme="light"] {
+    --bg-dark: #f8fafc;
+    --sidebar-bg: #f1f5f9;
+    --chat-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --bubble-user: #e2e8f0;
+    --surface-hover: rgba(0, 0, 0, 0.03);
+    --glass-bg: rgba(241, 245, 249, 0.7);
+    --code-bg: #f1f5f9;
+}
+
+[data-theme="solarized-dark"] {
+    --bg-dark: #001e26;
+    --sidebar-bg: #002b36;
+    --chat-bg: #073642;
+    --accent-primary: #268bd2;
+    --accent-secondary: #2aa198;
+    --accent-gradient: linear-gradient(135deg, #268bd2 0%, #2aa198 100%);
+    --text-main: #93a1a1;
+    --text-muted: #586e75;
+    --border-color: rgba(147, 161, 161, 0.15);
+    --bubble-user: #002b36;
+    --surface-hover: rgba(147, 161, 161, 0.07);
+    --glass-bg: rgba(0, 43, 54, 0.7);
+    --code-bg: #002b36;
+}
+
+[data-theme="solarized-light"] {
+    --bg-dark: #eee8d5;
+    --sidebar-bg: #fdf6e3;
+    --chat-bg: #fdf6e3;
+    --accent-primary: #268bd2;
+    --accent-secondary: #d33682;
+    --accent-gradient: linear-gradient(135deg, #268bd2 0%, #d33682 100%);
+    --text-main: #586e75;
+    --text-muted: #839496;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --bubble-user: #eee8d5;
+    --surface-hover: rgba(0, 0, 0, 0.04);
+    --glass-bg: rgba(253, 246, 227, 0.7);
+    --code-bg: #fdf6e3;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+}
+
+html {
+    overflow-x: hidden; /* Must be on html to truly block page-level horizontal scroll */
+    max-width: 100vw;
+}
+
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    overflow-x: hidden;
+    overflow-y: hidden; /* Controlled by app-container / main-content */
+    height: 100vh;
+    height: 100dvh;
+}
+
+
+/* Auth Visibility Logic */
+.is-logged-out .logged-in-only {
+    display: none !important;
+}
+
+body:not(.is-logged-out) .logged-out-only {
+    display: none !important;
+}
+
+/* Global Logo Styles */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text-main);
+}
+
+.logo-icon {
+    width: 32px;
+    height: 32px;
+    background: url('/logo.png') center/contain no-repeat;
+    border-radius: 8px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.logo-icon.large {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+}
+
+
+.global-menu-toggle {
+    position: fixed;
+    top: 14px;
+    left: 12px;
+    z-index: 1001; /* Above sidebar */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.global-menu-toggle:hover {
+    background: var(--surface-hover);
+    color: var(--text-main);
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+    height: 100dvh;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+
+/* Scrollbar global utility */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
